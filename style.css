@@ -105,6 +105,7 @@ header {
     border-radius: 30px;
     box-shadow: 0 4px 14px rgba(255, 82, 82, 0.35);
     transition: background 0.25s, transform 0.15s, box-shadow 0.25s;
+    white-space: nowrap;
 }
 .nav-shop-btn:hover{
     background: var(--primary-hover);
@@ -115,6 +116,35 @@ header {
 .nav-shop-btn.active{
     background: var(--dark-color);
     box-shadow: 0 4px 14px rgba(44, 62, 80, 0.35);
+}
+
+@media (max-width: 600px){
+    .navbar{
+        height: auto;
+        padding: 10px 0;
+        gap: 6px;
+    }
+    .logo{
+        font-size: 1.05rem;
+        gap: 5px;
+    }
+    .logo i, .logo-icon{ font-size: 1rem; }
+    .nav-links{ gap: 8px; }
+    .nav-links a{
+        font-size: 0.7rem;
+        white-space: nowrap;
+    }
+    .nav-shop-btn{
+        padding: 6px 12px;
+        border-radius: 16px;
+        box-shadow: none;
+    }
+    .cart-btn{ font-size: 1.1rem; }
+    .cart-badge{
+        width: 15px; height: 15px;
+        font-size: 0.55rem;
+        top: -5px; right: -7px;
+    }
 }
 
 .cart-btn {
