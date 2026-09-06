@@ -1,0 +1,153 @@
+Products · HTML
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="notranslate">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>المنتجات - عُثماني</title>
+ 
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+ 
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+ 
+    <!-- الهيدر وقائمة التنقل -->
+    <header>
+        <div class="navbar container">
+            <div class="logo">
+                <i class="fa-solid fa-utensils"></i>
+                <span>عُثماني</span>
+            </div>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="products.html" class="active">Shop All / كل المنتجات</a></li>
+                </ul>
+            </nav>
+ 
+            <div class="header-actions">
+                <!-- تم تصحيح: كان فيه span بعلامة X بالغلط جوه الزرار، اتبدلت بعداد السلة الصحيح -->
+                <button class="cart-btn" id="cart-toggle" onclick="openCartModal()">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-badge" id="cartCount">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+ 
+    <!-- محتوى التصفح الشجري للأقسام والمنتجات -->
+    <main class="container page-content">
+        <!-- مسار التنقل Breadcrumb -->
+        <nav class="breadcrumb" id="breadcrumb">
+            <span onclick="renderNavigation('all')"><i class="fa-solid fa-house"></i> Shop All</span>
+        </nav>
+ 
+        <h1 class="page-title" id="categoryTitle">كل الأقسام</h1>
+ 
+        <!-- كروت الأقسام (تظهر فقط عند تصفح الأقسام والأنواع) -->
+        <div class="category-grid" id="categoryGrid"></div>
+ 
+        <!-- كروت المنتجات (تظهر فقط عند اختيار نوع محدد) -->
+        <div class="products-grid" id="productGrid"></div>
+    </main>
+ 
+    <!-- زر الاتصال المباشر العائم -->
+    <a href="tel:+201507290049" class="call-float-btn" title="اتصل بنا">
+        <i class="fa-solid fa-phone"></i>
+    </a>
+ 
+    <!-- نافذة سلة المشتريات Modal -->
+    <!-- تم توحيد كل الـ IDs وحقول الفورم لتطابق index.html تماماً -->
+    <div id="cartModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Shopping Cart <i class="fa-solid fa-cart-shopping"></i></h2>
+                <span class="close-btn" onclick="closeCartModal()">&times;</span>
+            </div>
+ 
+            <!-- قائمة المنتجات -->
+            <div id="cartItemsContainer"></div>
+ 
+            <!-- إجمالي السعر -->
+            <div class="total-price-box">
+                <span>المجموع الكلي:</span>
+                <div><span id="cartTotalPrice">0 جنيه</span></div>
+            </div>
+ 
+            <!-- نموذج إتمام الطلب الشامل -->
+            <form class="checkout-form" id="checkoutForm" onsubmit="submitOrder(event)">
+                <h3>بيانات الشحن والدفع</h3>
+                
+                <div class="form-group">
+                    <label for="customerName">اسم العميل بالكامل *</label>
+                    <input type="text" id="customerName" name="customerName" placeholder="أدخل الاسم الثلاثي أو الرباعي" required>
+                </div>
+ 
+                <div class="form-group">
+                    <label for="customerAddress">العنوان بالتفصيل *</label>
+                    <input type="text" id="customerAddress" name="customerAddress" placeholder="المحافظة - المدينة - اسم الشارع - رقم المبنى" required>
+                </div>
+ 
+                <div class="form-group">
+                    <label for="customerEmail">البريد الإلكتروني (اختياري)</label>
+                    <input type="email" id="customerEmail" name="customerEmail" placeholder="example@email.com">
+                </div>
+ 
+                <div class="form-group">
+                    <label for="customerWhatsapp">رقم الهاتف (عليه واتساب) *</label>
+                    <input type="tel" id="customerWhatsapp" name="customerWhatsapp" placeholder="01xxxxxxxxx" required>
+                </div>
+ 
+                <div class="form-group">
+                    <label for="customerAltPhone">رقم هاتف آخر (اختياري)</label>
+                    <input type="tel" id="customerAltPhone" name="customerAltPhone" placeholder="رقم للطوارئ أو لتسهيل التوصيل">
+                </div>
+ 
+                <div class="form-group">
+                    <label for="paymentMethod">طريقة الدفع *</label>
+                    <select id="paymentMethod" name="paymentMethod" required>
+                        <option value="" disabled selected>اختر طريقة الدفع</option>
+                        <option value="الدفع عند الاستلام (Cash on Delivery)">الدفع عند الاستلام</option>
+                        <option value="فودافون كاش (Vodafone Cash)">فودافون كاش</option>
+                        <option value="إنستاباي (InstaPay)">إنستاباي (InstaPay)</option>
+                    </select>
+                </div>
+ 
+                <div class="form-group">
+                    <label for="orderNotes">ملاحظات إضافية (اختياري)</label>
+                    <textarea id="orderNotes" name="orderNotes" placeholder="أحجام، ألوان، أو أي تعليمات خاصة بالتوصيل"></textarea>
+                </div>
+ 
+                <button type="submit" class="btn btn-submit">تأكيد وإتمام الطلب</button>
+            </form>
+        </div>
+    </div>
+ 
+    <!-- الفوتر -->
+    <footer>
+        <div class="container footer-content">
+            <p class="footer-address"><i class="fa-solid fa-location-dot"></i> 6 أكتوبر - شارع 922 - الحي الرابع - المجاورة الرابعة - خطوات من شارع الخزان - أمام معهد أحمد المهدي</p>
+            <p class="footer-copyright">&copy; 2026 عُثماني Othmanii. جميع الحقوق محفوظة. <a href="login.html" style="color:#7a8a99; text-decoration:none; font-size:0.8rem;" title="لوحة التحكم"><i class="fa-solid fa-lock" style="font-size:0.7rem;"></i></a></p>
+        </div>
+    </footer>
+ 
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase-init.js"></script>
+    <script src="category-data.js"></script>
+    <script src="main.js"></script>
+    <script type="text/javascript">
+        (function(){
+            emailjs.init("DR9M_nrSyJyyX5hrn");
+        })();
+    </script>
+</body>
+</html>

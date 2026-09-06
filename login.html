@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="notranslate">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>تسجيل دخول الإدارة - عُثماني</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-wrap{
+            max-width: 420px;
+            margin: 60px auto;
+            padding: 0 1rem;
+        }
+        .login-panel{
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem 1.8rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .login-panel h1{
+            font-size: 1.4rem;
+            color: var(--dark-color);
+            margin-bottom: 1.4rem;
+            text-align: center;
+        }
+        .login-error{
+            background:#fdecea;
+            color:#c0392b;
+            border-radius:8px;
+            padding:10px 14px;
+            font-size:0.85rem;
+            margin-bottom:14px;
+            display:none;
+        }
+        .login-error.show{ display:block; }
+        .btn-login{ width:100%; margin-top:6px; }
+    </style>
+</head>
+<body>
+
+<div class="login-wrap">
+    <div class="login-panel">
+        <h1><i class="fa-solid fa-lock"></i> لوحة تحكم عُثماني</h1>
+
+        <div class="login-error" id="login-error"></div>
+
+        <div class="form-group" style="margin-bottom:14px;">
+            <label>البريد الإلكتروني</label>
+            <input id="login-email" type="email" autocomplete="username" placeholder="example@email.com">
+        </div>
+        <div class="form-group" style="margin-bottom:14px;">
+            <label>كلمة المرور</label>
+            <input id="login-password" type="password" autocomplete="current-password" placeholder="••••••••">
+        </div>
+
+        <button class="btn btn-primary btn-login" id="btn-login">دخول</button>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-init.js"></script>
+<script>
+    const emailInput = document.getElementById('login-email');
+    const passwordInput = document.getElementById('login-password');
+    const errorBox = document.getElementById('login-error');
+    const btn = document.getElementById('btn-login');
+
+    function showError(msg){
+        errorBox.textContent = msg;
+        errorBox.classList.add('show');
+    }
+
+    function translateError(code){
+        switch(code){
+            case 'auth/invalid-email': return 'البريد الإلكتروني غير صحيح.';
+            case 'auth/user-not-found':
+            case 'auth/wrong-password':
+            case 'auth/invalid-credential': return 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+            case 'auth/too-many-requests': return 'محاولات كتير غلط، حاولي تاني بعد شوية.';
+            default: return 'حصل خطأ، حاولي تاني.';
+        }
+    }
+
+    async function doLogin(){
+        errorBox.classList.remove('show');
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        if(!email || !password){
+            showError('اكتبي البريد الإلكتروني وكلمة المرور.');
+            return;
+        }
+        btn.disabled = true;
+        btn.textContent = 'جاري الدخول...';
+        try{
+            await auth.signInWithEmailAndPassword(email, password);
+            window.location.href = 'admin.html';
+        }catch(err){
+            showError(translateError(err.code));
+            btn.disabled = false;
+            btn.textContent = 'دخول';
+        }
+    }
+
+    btn.addEventListener('click', doLogin);
+    passwordInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') doLogin(); });
+
+    auth.onAuthStateChanged((user)=>{
+        if(user) window.location.href = 'admin.html';
+    });
+</script>
+</body>
+</html>
